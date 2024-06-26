@@ -49,7 +49,7 @@ const loginSlice = createSlice({
         logout: (state, action) => {
             console.log("logout....")
 
-            removeCookie("member")
+            removeCookie('member')
             
             return {...initState}
         }

@@ -3,7 +3,7 @@ import { Navigate, createSearchParams, useNavigate } from "react-router-dom";
 import { loginPostAsync, logout } from "../slices/loginSlice";
 import { loginPost } from "../api/memberApi";
 import { removeCookie, setCookie } from "../util/cookieUtil";
-import { useRecoilState, useResetRecoilState } from "recoil";
+//import { useRecoilState, useResetRecoilState } from "recoil";
 import signinState from "../atoms/signinState";
 import { cartState } from "../atoms/cartState";
 
@@ -11,19 +11,20 @@ const useCustomLogin = () => {
 
     const navigate = useNavigate()
 
-    //const loginState = useSelector(state => state.loginSlice) // ----로그인 상태
-    const [loginState, setLoginState] = useRecoilState(signinState)
-    const resetState = useResetRecoilState(signinState)
-    const resetCartState = useResetRecoilState(cartState) // 장바구니 비우기
+    const loginState = useSelector(state => state.loginSlice) // ----로그인 상태
+    //const [loginState, setLoginState] = useRecoilState(signinState)
+    //const resetState = useResetRecoilState(signinState)
+    //const resetCartState = useResetRecoilState(cartState) // 장바구니 비우기
     
-    //const dispatch = useDispatch()
+    const dispatch = useDispatch()
 
     const isLogin = loginState.email ? true : false // ----로그인 여부
 
     const doLogin = async(loginParam) => { // ---------로그인 함수
 
-        // const action = await dispatch(loginPostAsync(loginParam))
-        // return action.payload
+        const action = await dispatch(loginPostAsync(loginParam))
+        return action.payload
+        
         const result = await loginPost(loginParam)
         console.log(result)
         saveAsCookie(result)
@@ -31,15 +32,15 @@ const useCustomLogin = () => {
     }
     const saveAsCookie = (data) => {
         setCookie("member", JSON.stringify(data), 1) // 1일
-        setLoginState(data)
+        //setLoginState(data)
     }
 
     const doLogout = () => { // -----로그아웃 함수
 
-        // dispatch(logout())
+        dispatch(logout())
         removeCookie('member')
-        resetState()
-        resetCartState()
+        //resetState()
+        //resetCartState()
 
     }
 

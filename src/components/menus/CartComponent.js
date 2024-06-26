@@ -4,37 +4,37 @@ import { getCartItemsAsync } from "../../slices/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 import useCustomCart from "../../hooks/useCustomCart";
 import CartItemComponent from "../cart/CartItemComponent";
-import { cartTotalState } from "../../atoms/cartState";
-import { useRecoilValue } from "recoil";
+//import { cartTotalState } from "../../atoms/cartState";
+//import { useRecoilValue } from "recoil";
 
 const CartComponent = () => {
 
     const {isLogin, loginState} = useCustomLogin()
-    const {cartItems, changeCart} = useCustomCart()
-    const totalValue = useRecoilValue(cartTotalState)
+    //const {cartItems, changeCart} = useCustomCart()
+    //const totalValue = useRecoilValue(cartTotalState)
 
-    //const dispatch = useDispatch();
+    const dispatch = useDispatch();
     //const cartItems = useSelector(state => state.cartSlice)
 
-    // useEffect(() => {
-    //     dispatch(getCartItemsAsync())
-    // },[isLogin])
+    useEffect(() => {
+        dispatch(getCartItemsAsync())
+    },[isLogin])
     
-    //const {refreshCart, cartItems, changeCart} = useCustomCart()
+    const {refreshCart, cartItems, changeCart} = useCustomCart()
     
-    // const total = useMemo(() => {
-    //     let total = 0
+    const total = useMemo(() => {
+        let total = 0
 
-    //     for(const item of cartItems) {
-    //         total += item.price * item.qty
-    //     }
-    //     return total
-    // }, [cartItems])
-    // useEffect(() => {
-    //     if(isLogin) {
-    //         refreshCart()
-    //     }
-    // }, [isLogin])
+        for(const item of cartItems) {
+            total += item.price * item.qty
+        }
+        return total
+    }, [cartItems])
+    useEffect(() => {
+        if(isLogin) {
+            refreshCart()
+        }
+    }, [isLogin])
 
 
     return (
@@ -66,8 +66,8 @@ const CartComponent = () => {
 
   
                 <div className="m-2 text-3xl">
-                    {/* TOTAL: {total} */}
-                        TOTAL: {totalValue}
+                    TOTAL: {total}
+                    {/* TOTAL: {totalValue} */}
                 </div>    
             </div>       
             :

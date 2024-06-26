@@ -5,7 +5,7 @@ import FetchingModal from "../common/FetchingModal";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import PageComponent from "../common/PageComponent";
 import useCustomLogin from "../../hooks/useCustomLogin";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+//import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 const initState = {
     dtoList: [],
@@ -24,23 +24,23 @@ const host = API_SERVER_HOST
 
 const ListComponent = () => {
 
-    //const {exceptionHandler} = useCustomLogin()
+    const {exceptionHandler} = useCustomLogin()
 
     // serverData는 나중에 사용
-    //const [serverData, setServerData] = useState(initState)
+    const [serverData, setServerData] = useState(initState)
 
     // for FetchingModal
-    //const [fetching, setFetching] = useState(false)
+    const [fetching, setFetching] = useState(false)
     
     const {moveToLoginReturn} = useCustomLogin()
 
     const {page, size, refresh, moveToList, moveToRead} = useCustomMove()
 
-    const {isFetching, data, error, isError} = useQuery(
-        ['products/list', {page, size, refresh}],  // --- refresh 추가
-        () => getList({page, size}),
-        {staleTime: 1000 * 5}   // ----- staleTime 추가
-    )
+    // const {isFetching, data, error, isError} = useQuery(
+    //     ['products/list', {page, size, refresh}],  // --- refresh 추가
+    //     () => getList({page, size}),
+    //     {staleTime: 1000 * 5}   // ----- staleTime 추가
+    // )
 
     //const queryClient = useQueryClient() // 리액트 쿼리 초기화를 위한 현재 객체
 
@@ -52,31 +52,31 @@ const ListComponent = () => {
         moveToList(pageParam)
     }
 
-    if(isError) {
-        console.log(error)
-        return moveToLoginReturn()
-    }
+    // if(isError) {
+    //     console.log(error)
+    //     return moveToLoginReturn()
+    // }
 
-    const serverData = data || initState
+    //const serverData = data || initState
   
 
-    // useEffect(() => {
+    useEffect(() => {
         
-    //     setFetching(true)
+        setFetching(true)
 
-    //     getList({page,size}).then(data => {
-    //         console.log(data)
-    //         setServerData(data)
-    //         setFetching(false)
-    //     }).catch(err => exceptionHandler(err))
+        getList({page,size}).then(data => {
+            console.log(data)
+            setServerData(data)
+            setFetching(false)
+        }).catch(err => exceptionHandler(err))
 
-    // }, [page, size, refresh])
+    }, [page, size, refresh])
 
 
     return (
         <div className="border-2 border-blue-100 mt-10 mr-2 ml-2">
-            {/* {fetching? <FetchingModal/> : <></>} */}
-            {isFetching? <FetchingModal/> : <></>}
+            {fetching? <FetchingModal/> : <></>}
+            {/* {isFetching? <FetchingModal/> : <></>} */}
 
             <div className="flex flex-wrap mx-auto p-6">
 

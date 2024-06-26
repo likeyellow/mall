@@ -25,67 +25,67 @@ const AddComponent = () => {
         setProduct({...product})
     }
 
-    const addMutation = useMutation((product) => postAdd(product)) // 리액트 쿼리
+    //const addMutation = useMutation((product) => postAdd(product)) // 리액트 쿼리
 
-    const handleClickAdd = (e) => {
-
-        const files = uploadRef.current.files
-        const formData = new FormData()
-
-        for(let i = 0; i < files.length; i++) {
-            formData.append("files", files[i]);
-        }
-        // other data
-        formData.append("pname", product.pname)
-        formData.append("pdesc", product.pdesc)
-        formData.append("price", product.price)
-
-        addMutation.mutate(formData) // 기존 코드에서 변경
-    }
-    
     // const handleClickAdd = (e) => {
 
     //     const files = uploadRef.current.files
     //     const formData = new FormData()
 
     //     for(let i = 0; i < files.length; i++) {
-    //         formData.append("files", files[i])
+    //         formData.append("files", files[i]);
     //     }
     //     // other data
     //     formData.append("pname", product.pname)
     //     formData.append("pdesc", product.pdesc)
     //     formData.append("price", product.price)
 
-    //     console.log(formData)
-
-    //     setFetching(true)
-    //     postAdd(formData).then(data => {
-    //         setFetching(false)
-    //         setResult(data.result)
-    //     })
+    //     addMutation.mutate(formData) // 기존 코드에서 변경
     // }
+    
+    const handleClickAdd = (e) => {
+
+        const files = uploadRef.current.files
+        const formData = new FormData()
+
+        for(let i = 0; i < files.length; i++) {
+            formData.append("files", files[i])
+        }
+        // other data
+        formData.append("pname", product.pname)
+        formData.append("pdesc", product.pdesc)
+        formData.append("price", product.price)
+
+        console.log(formData)
+
+        setFetching(true)
+        postAdd(formData).then(data => {
+            setFetching(false)
+            setResult(data.result)
+        })
+    }
 
     // for FetchingModal
-    // const [fetching, setFetching] = useState(false)
+    const [fetching, setFetching] = useState(false)
 
     // for ResultModal
-    // const [result, setResult] = useState(null)
+    const [result, setResult] = useState(null)
 
 
 
-    const queryClient = useQueryClient()
+    //const queryClient = useQueryClient()
 
     const closeModal = () => { // ResultModal 종료
 
-        //setResult(null)
-        queryClient.invalidateQueries("products/lists")
+        setResult(null)
+        //queryClient.invalidateQueries("products/lists")
         
         moveToList({page:1}) // 모달 창이 닫히면 이동
     }
 
     return(
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
-            {/* {fetching? <FetchingModal/> : <></>}
+            {fetching? <FetchingModal/> : <></>}
 
             {result?
                 <ResultModal
@@ -94,8 +94,8 @@ const AddComponent = () => {
                     callbackFn={closeModal} 
                 />
                 : <></>
-            }     */}
-            {addMutation.isLoading ? <FetchingModal /> : <></>}
+            }    
+            {/* {addMutation.isLoading ? <FetchingModal /> : <></>}
             {addMutation.isSuccess ?
             <ResultModal
                 title={'Add Result'}
@@ -103,7 +103,7 @@ const AddComponent = () => {
                 callbackFn={closeModal}/>
             :
             <></>
-            }
+            } */}
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">Product Name</div>

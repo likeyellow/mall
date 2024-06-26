@@ -4,7 +4,7 @@ import FetchingModal from "../common/FetchingModal";
 import { API_SERVER_HOST } from "../../api/todoApi";
 import useCustomMove from "../../hooks/useCustomMove";
 import ResultModal from "../common/ResultModal";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+//import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 
 const initState = {
     pno: 0,
@@ -26,19 +26,19 @@ const ModifyComponent = ({pno}) => {
     const uploadRef = useRef()
 
     // 결과 모달
-    // const [result, setResult] = useState(null)
+    const [result, setResult] = useState(null)
 
-    // const [fetching, setFetching] = useState(false)
+    const [fetching, setFetching] = useState(false)
 
-    // useEffect(() => {
+    useEffect(() => {
 
-    //     setFetching(true)
+        setFetching(true)
 
-    //     getOne(pno).then(data => {
-    //         setProduct(data)
-    //         setFetching(false)
-    //     })
-    // }, [pno])
+        getOne(pno).then(data => {
+            setProduct(data)
+            setFetching(false)
+        })
+    }, [pno])
 
     // const query = useQuery(
     //     ['products', pno],
@@ -48,18 +48,18 @@ const ModifyComponent = ({pno}) => {
     // if(query.isSuccess) {
     //     setProduct(query.data)
     // }
-    const query = useQuery(
-        ['products', pno],
-        () => getOne(pno),
-        {
-            staleTime: Infinity
-        }
-    )
-    useEffect(() => {
-        if(query.isSuccess) {
-            setProduct(query.data)
-        }
-    }, [pno, query.data, query.isSuccess])
+    // const query = useQuery(
+    //     ['products', pno],
+    //     () => getOne(pno),
+    //     {
+    //         staleTime: Infinity
+    //     }
+    // )
+    // useEffect(() => {
+    //     if(query.isSuccess) {
+    //         setProduct(query.data)
+    //     }
+    // }, [pno, query.data, query.isSuccess])
 
 
     const handleChangeProduct = (e) => {
@@ -79,7 +79,7 @@ const ModifyComponent = ({pno}) => {
             setProduct({...product})
     }
 
-    const modMutation = useMutation((product) => putOne(pno, product))
+    //const modMutation = useMutation((product) => putOne(pno, product))
 
     const handleClickModify = () => {
 
@@ -101,54 +101,54 @@ const ModifyComponent = ({pno}) => {
             formData.append("uploadFileNames", product.uploadFileNames[i])
         }
 
-        modMutation.mutate(formData)
+        //modMutation.mutate(formData)
         // useQuery 사용으로 기존 처리 관련 코드 삭제
         // fetching
-        // setFetching(true)
+        setFetching(true)
 
-        // putOne(pno, formData).then(data => { // 수정 처리
-        //     setResult('Modified')
-        //     setFetching(false)
-        // })
+        putOne(pno, formData).then(data => { // 수정 처리
+            setResult('Modified')
+            setFetching(false)
+        })
     }
 
-    const delMutation = useMutation((pno) => deleteOne(pno))
-    const queryClient = useQueryClient()
+    //const delMutation = useMutation((pno) => deleteOne(pno))
+    //const queryClient = useQueryClient()
 
     const handleClickDelete = () => {
         // useQuery 사용으로 기존 처리 관련 코드 삭제
-        // setFetching(true)
-        // deleteOne(pno).then(data => {
-        //     setResult("Deleted")
-        //     setFetching(false)
-        // })
-        delMutation.mutate(pno)
+        setFetching(true)
+        deleteOne(pno).then(data => {
+            setResult("Deleted")
+            setFetching(false)
+        })
+        //delMutation.mutate(pno)
     }
 
     const closeModal = () => {
         // useQuery 사용으로 기존 처리 관련 코드 삭제
-        // if(result === 'Modified') {
-        //     moveToRead(pno)  // 조회 화면으로 이동
-        // } else if(result === 'Deleted') {
-        //     moveToList({page:1})
+        if(result === 'Modified') {
+            moveToRead(pno)  // 조회 화면으로 이동
+        } else if(result === 'Deleted') {
+            moveToList({page:1})
+        }
+        setResult(null)
+        // if(delMutation.isSuccess) {
+        //     queryClient.invalidateQueries(['products', pno])
+        //     queryClient.invalidateQueries(['products/list'])
+        //     moveToList()
         // }
-        // setResult(null)
-        if(delMutation.isSuccess) {
-            queryClient.invalidateQueries(['products', pno])
-            queryClient.invalidateQueries(['products/list'])
-            moveToList()
-        }
-        if(modMutation.isSuccess) {
-            queryClient.invalidateQueries(['products', pno])
-            queryClient.invalidateQueries(['products/list'])
-            moveToRead(pno)
-        }
+        // if(modMutation.isSuccess) {
+        //     queryClient.invalidateQueries(['products', pno])
+        //     queryClient.invalidateQueries(['products/list'])
+        //     moveToRead(pno)
+        // }
     }
 
     return (
         <div className="border-2 border-sky-200 mt-10 m-2 p-4">
 
-            {/* {fetching? <FetchingModal/> : <></>}
+            {fetching? <FetchingModal/> : <></>}
 
             {result?
                 <ResultModal
@@ -158,8 +158,8 @@ const ModifyComponent = ({pno}) => {
                 />
                 :
                 <></>
-            }       */}
-            {query.isFetching || delMutation.isLoading || modMutation.isLoading ?
+            }      
+            {/* {query.isFetching || delMutation.isLoading || modMutation.isLoading ?
             <FetchingModal />
             :
             <></>
@@ -173,7 +173,7 @@ const ModifyComponent = ({pno}) => {
                 </ResultModal>
                 :
                 <></>
-            }
+            } */}
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 p-6 text-right font-bold">Product Name</div>
