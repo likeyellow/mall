@@ -4,6 +4,7 @@ import { loginPostAsync } from "../../slices/loginSlice";
 import { useNavigate } from "react-router-dom";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import KaKaoLoginComponent from "./KakaoLoginComponent";
+import { error } from "jquery";
 
 const initState = {
     email: '',
@@ -27,6 +28,8 @@ const LoginComponent = () => {
 
     }
 
+
+
     const handleClickLogin = (e) => {
         //dispatch(login(loginParam)) // 동기화된 호출
         //dispatch(loginPostAsync(loginParam))  // loginSlice의 비동기 호출
@@ -37,7 +40,7 @@ const LoginComponent = () => {
                 console.log(data)
 
                 if(data.error) {
-                    alert("이메일과 패스워드를 다시 확인하세요")
+                    alert(data.error)
                 } else {
                     alert("로그인 성공")
                     //navigate({pathname: `/`}, {replace:true}) // 뒤로 가기 했을 때 로그인 화면을 볼 수없게
@@ -79,9 +82,18 @@ const LoginComponent = () => {
                     </input>               
                 </div>
             </div>
+
             <div className="flex justify-center">
-                <div className="relative mb-4 flex w-full justify-center">
-                    <div className="w-2/5 p-6 flex justify-center font-bold">
+                <div className="relative mb-4 flex w-full flex-wrap items-stretch">
+                    <div className="w-full p-3 text-left font-bold">
+                        
+                    </div>
+                </div> 
+            </div>
+
+            <div className="flex justify-center">
+                <div className="relative mb-1 flex w-full justify-center">
+                    <div className="w-4/5 p-6 flex justify-center font-bold">
                         <button
                         className="rounded p-4 w-36 bg-blue-500 text-xl text-white"
                         onClick={handleClickLogin}>
