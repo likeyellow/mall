@@ -39,7 +39,6 @@ const LoginComponent = () => {
                 //console.log("after unwrap.....")
                 console.log(data)
 
-  
                 if(data.error) {
                     //alert(data.error)
                     setError(data.error)
@@ -88,8 +87,8 @@ const LoginComponent = () => {
 
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
-                    {error && error === 500 && <label className="text-red-600 font-bold">블라블라1</label>}
-                    {error && error === 404 && <label className="text-red-600 font-bold">블라블라2</label>}
+                    {error && <label className="text-red-600 font-bold">{error}</label>}
+                    {/* {error && error === 404 && <label className="text-red-600 font-bold">블라블라2</label>} */}
                 </div> 
             </div>
 
