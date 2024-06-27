@@ -28,7 +28,7 @@ const LoginComponent = () => {
 
     }
 
-
+    const [error, setError] = useState()
 
     const handleClickLogin = (e) => {
         //dispatch(login(loginParam)) // 동기화된 호출
@@ -39,8 +39,11 @@ const LoginComponent = () => {
                 //console.log("after unwrap.....")
                 console.log(data)
 
+  
                 if(data.error) {
-                    alert(data.error)
+                    //alert(data.error)
+                    setError(data.error)
+
                 } else {
                     alert("로그인 성공")
                     //navigate({pathname: `/`}, {replace:true}) // 뒤로 가기 했을 때 로그인 화면을 볼 수없게
@@ -85,9 +88,8 @@ const LoginComponent = () => {
 
             <div className="flex justify-center">
                 <div className="relative mb-4 flex w-full flex-wrap items-stretch">
-                    <div className="w-full p-3 text-left font-bold">
-                        
-                    </div>
+                    {error && error === 500 && <label className="text-red-600 font-bold">블라블라1</label>}
+                    {error && error === 404 && <label className="text-red-600 font-bold">블라블라2</label>}
                 </div> 
             </div>
 
