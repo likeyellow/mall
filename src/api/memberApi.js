@@ -18,6 +18,18 @@ export const loginPost = async(loginParam) => {
 
 }
 
+export const loginGet = async() => {
+    try {
+        const res = await axios.get(`${API_SERVER_HOST}/member/login`)
+
+        console.log("로그인페이지호출")
+        
+        return res.data
+    } catch(error) {
+        console.error("Error during login:", error)
+    }
+}
+
 export const modifyMember = async(member) => {
     
     const res = await jwtAxios.put(`${host}/modify`, member)

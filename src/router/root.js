@@ -4,6 +4,7 @@ import todoRouter from "./todoRouter";
 import productsRouter from "./productsRouter";
 import jqueryRouter from "./jqueryRouter";
 import memberRouter from "./memberRouter";
+import { loginGet } from "../api/memberApi";
 
 const {createBrowserRouter} = require("react-router-dom");
 
@@ -43,6 +44,10 @@ const root = createBrowserRouter([
     {
         path: "member",
         children: memberRouter()
+    },
+    {
+        path: "member/login",
+        element: <Suspense fallback={Loading}>{loginGet()}</Suspense>
     }
 
 ])
