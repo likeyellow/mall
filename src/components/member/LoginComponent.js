@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import useCustomLogin from "../../hooks/useCustomLogin";
 import KaKaoLoginComponent from "./KakaoLoginComponent";
 import { error } from "jquery";
+import { Link } from "react-router-dom";
 
 const initState = {
     email: '',
@@ -101,6 +102,15 @@ const LoginComponent = () => {
                             LOGIN
                         </button>
                     </div>
+                </div>
+            </div>
+
+
+            <div className="flex justify-center">
+                <div className="w-4/5 p-6 flex justify-center font-bold">
+                    <Link to="/member/register" className="text-blue-500">
+                         회원가입 페이지로 이동
+                    </Link>
                 </div>
             </div>
             <KaKaoLoginComponent />
