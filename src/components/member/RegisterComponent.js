@@ -24,6 +24,7 @@ const RegisterComponent = () => {
     const initState = {
         email: '',
         pw: '',
+        confirmPw: '', // 비밀번호 확인 필드 추가
         username: '',
         zonecode: '', // 우편번호
         address: '', // 주소
@@ -32,6 +33,8 @@ const RegisterComponent = () => {
     
     const [registerParam, setRegisterParam] = useState({...initState})
     const [isOpen, setIsOpen] = useState(false) // 주소찾기 모달 열기/닫기 상태
+    const [error, setError] = useState()
+    const [pwError, setPwError] = useState() // 비밀번호 오류 상태
 
     const {doRegister, moveToPath} = useCustomRegister()
 
@@ -40,13 +43,20 @@ const RegisterComponent = () => {
         // setRegisterParam({...registerParam})
         setRegisterParam({
             ...registerParam,
-            [e.target.name]: e.target.vaule
+            [e.target.name]: e.target.value
         });
+
+        if(e.target.name === 'pw' || e.target.name === 'confirmPw') {
+            if(registerParam.pw !== e.target.value && e.target.name === 'confirmPw') {
+                setError('비밀번호가 일치하지 않습니다.')
+            } else {
+                setPwError('')
+            }
+        }
     }
 
-    const [error, setError] = useState()
-
     const handleAddressComplete = (data) => {
+        console.log("주소 선택 완료:", data);
         setRegisterParam({
             ...registerParam,
             zonecode: data.zonecode,
@@ -56,16 +66,21 @@ const RegisterComponent = () => {
     }
 
     const toggleModal = () => {
+        console.log("토글 모달 호출됨, 현재 상태:", isOpen);
         setIsOpen(!isOpen); // 주소찾기 모달 열기/닫기 토글
     }
 
     const handleClickRegister = () => {
+        if(registerParam.pw !== registerParam.confirmPw) {
+            setPwError('비밀번호가 일치하지 않습니다.')
+            return;
+        }
         // 회원가입 처리 로직
+        doRegister(registerParam)
     }
 
-
     return (
-        <div className="border-2 border-sky-200 mt-10 m-2 p-4">
+        <div className="border-2 border-sky-200 mt-10 m-2 p-4 overflow-auto" style={{maxHeight: '100vh'}}>
             <div className="flex justify-center">
                 <div className="text-4xl m-4 p-4 font-extrabold text-blue-500">
                     회원가입
@@ -100,6 +115,22 @@ const RegisterComponent = () => {
                 </div>
             </div>
             <div className="flex justify-center">
+                <div className="relative mb-4 flex w-full flex-wrap items-stretch">
+                    <div className="w-1/5 py-0 pr-3 text-left font-bold">
+                        Confirm Password
+                    </div>
+                    <input
+                        className="w-4/5 p-3 rounded-r border border-solid border-neutral-500 shadow-md"
+                        name="confirmPw"
+                        type="password"
+                        placeholder="비밀번호 확인"
+                        value={registerParam.confirmPw}
+                        onChange={handleChange}>
+                    </input>
+                    {pwError && <div className="w-full text-red-600 font-bold mt-1">{pwError}</div>}
+                </div>
+            </div>
+            <div className="flex justify-center">
                 <div className="relateve mb-4 flex w-full flex-wrap items-stretch">
                     <div className="w-1/5 py-3 pr-3 text-left font-bold">
                         Username
@@ -128,16 +159,17 @@ const RegisterComponent = () => {
                                value={registerParam.zonecode}
                                readOnly>
                         </input>                 
-                        <button className="w-36 rounded 
-                                         bg-green-600 text-xl text-white p-2"
-                                type={'button'}         
-                                onClick={toggleModal}>
+                        <button
+                            className="w-36 rounded bg-green-600 text-xl text-white p-2"
+                            type="button"
+                            onClick={toggleModal}
+                        >
                             주소찾기
                         </button>
                         <AddressInput
-                            isOpen={isOpen} 
+                            isOpen={isOpen}
                             onComplete={handleAddressComplete}
-                            toggleHandler={toggleModal} 
+                            toggleHandler={toggleModal}
                         />
                     </div>
                 </div>
