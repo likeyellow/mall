@@ -4,7 +4,7 @@ import { loginPostAsync } from "../../slices/loginSlice";
 import { useNavigate } from "react-router-dom";
 import useCustomRegister from "../../hooks/useCustomRegister";
 import { Link } from "react-router-dom";
-import DaumPostcode from 'react-daum-postcode';
+import AddressInput from '../common/AddressInput';
 
 const RegisterComponent = () => {
 
@@ -46,7 +46,7 @@ const RegisterComponent = () => {
 
     const [error, setError] = useState()
 
-    const handleComplete = (data) => {
+    const handleAddressComplete = (data) => {
         setRegisterParam({
             ...registerParam,
             zonecode: data.zonecode,
@@ -78,6 +78,7 @@ const RegisterComponent = () => {
                             border-solid border-neutral-500 shadow-md"
                     name="email"
                     type={'text'}
+                    placeholder="이메일주소"
                     value={registerParam.email}
                     onChange={handleChange}>
                     </input>
@@ -92,6 +93,7 @@ const RegisterComponent = () => {
                              border-neutral-500 shadow-md"
                     name="pw"
                     type={'password'}
+                    placeholder="비밀번호"
                     value={registerParam.pw}
                     onChange={handleChange}>                    
                     </input>
@@ -106,6 +108,7 @@ const RegisterComponent = () => {
                              border-neutral-500 shadow-md"
                     name="username"
                     type={'text'}
+                    placeholder="닉네임"
                     value={registerParam.username}
                     onChange={handleChange}>    
                     </input>
@@ -119,28 +122,24 @@ const RegisterComponent = () => {
                     <div className="w-4/5 flex">
                         <input className="mr-3 p-3 rounded-r border border-solid 
                                         border-neutral-500 shadow-md"
-                               name="address"
+                               name="zonecode"
                                type={'text'}
-                               value={registerParam.address}
+                               placeholder="우편번호"
+                               value={registerParam.zonecode}
                                readOnly>
                         </input>                 
                         <button className="w-36 rounded 
-                                         bg-blue-500 text-xl text-white"
+                                         bg-green-600 text-xl text-white p-2"
+                                type={'button'}         
                                 onClick={toggleModal}>
                             주소찾기
                         </button>
+                        <AddressInput
+                            isOpen={isOpen} 
+                            onComplete={handleAddressComplete}
+                            toggleHandler={toggleModal} 
+                        />
                     </div>
-
-                    
-                    {isOpen && (
-                        <div className="flex justify-center">
-                            <DaumPostcode 
-                            onComplete={handleComplete}
-                            style={{width: '360px', height: '480px'}}
-                            animation={true}
-                            autoClose={true}/>  
-                        </div>
-                    )}
                 </div>
             </div>
             <div className="flex justify-center">
@@ -150,6 +149,7 @@ const RegisterComponent = () => {
                     <input className="w-4/5 p-3 rounded-r border border-solid 
                                         border-neutral-500 shadow-md"
                             name="address"
+                            placeholder="주소"
                             type={'text'}
                             value={registerParam.address}
                             readOnly>
@@ -164,6 +164,7 @@ const RegisterComponent = () => {
                                      border-neutral-500 shadow-md"
                             name="detailedAddress"
                             type={'text'}
+                            placeholder="상세주소"
                             value={registerParam.detailedAddress}
                             onChange={handleChange}>
                     </input>               
@@ -177,12 +178,14 @@ const RegisterComponent = () => {
                 </div>
             </div>
 
-            <div className="flex justify-center">
+            <div className="flex justify-center mt-8">
                 <div className="relative mb-1 flex w-full justify-center">
-                    <div className="w-4/5 p-6 flex justify-center font-bold">
-                        <button className="rounded p-4 bg-blue-500 text-xl text-white"
+                    <div className="w-1/5 p-3 text-left font-blod">
+                    </div>
+                    <div className="w-4/5 flex justify-center font-bold">
+                        <button className="rounded p-4 w-full bg-blue-500 text-xl text-white"
                         onClick={handleClickRegister}>
-                            REGISTER
+                            가입하기
                         </button>
                     </div>
                 </div>
