@@ -282,8 +282,10 @@ const RegisterComponent = () => {
             </div>
 
             <div className="flex justify-center">
+                <div className="w-1/5 p-3 text-left font-blod">
+                </div>
                 <div className="w-4/5 p-6 flex justify-center font-bold">
-                    <Link to="/member/login" className="text-blue-500">
+                    <Link to="/member/login" className="text-blue-500 text-center">
                         로그인 페이지로 이동
                     </Link>
                 </div>
