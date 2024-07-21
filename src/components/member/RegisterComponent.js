@@ -8,19 +8,6 @@ import AddressInput from '../common/AddressInput';
 
 const RegisterComponent = () => {
 
-    // const [user, setUser] = useState({
-    //     username: '',
-    //     password: '',
-    //     email: ''
-    // });
-
-    // const handleChange = (e) => {
-    //     const {name, value} = e.target
-    //     setUser({
-    //         ...user,
-    //         [name]: value
-    //     });
-    // };
     const initState = {
         email: '',
         pw: '',
@@ -32,26 +19,85 @@ const RegisterComponent = () => {
     }
     
     const [registerParam, setRegisterParam] = useState({...initState})
-    const [isOpen, setIsOpen] = useState(false) // 주소찾기 모달 열기/닫기 상태
-    const [error, setError] = useState()
-    const [pwError, setPwError] = useState() // 비밀번호 오류 상태
 
     const {doRegister, moveToPath} = useCustomRegister()
 
+    const [isOpen, setIsOpen] = useState(false) // 주소찾기 모달 열기/닫기 상태
+    const [errors, setErrors] = useState({
+        email: '',
+        pw: '',
+        confirmPw: '',
+        username: '',
+        address: '',
+        detailedAddress: ''
+    })
+
+    const validateField = (name, value, pwValue) => {
+        let error = ''
+        switch (name) {
+            case 'email':
+                if (!value) {
+                    error = '이메일은 필수 입력항목입니다.'
+                } else if (!/\S+@\S+\.\S+/.test(value)) {
+                    error = '유효한 이메일 주소를 입력해주세요.'
+                }
+                break
+            case 'pw':
+                if (!value) {
+                    error = '비밀번호는 필수 입력항목입니다.'
+                } else if (value.length < 6) {
+                    error = '비밀번호는 최소 6자 이상이어야 합니다.'
+                }
+                break
+            case 'confirmPw':
+                if (value && value !== pwValue) {
+                    error = '비밀번호가 일치하지 않습니다.'
+                } 
+                break
+            case 'address':
+                if (!value) {
+                    error = '주소는 필수 입력항목입니다.'
+                }
+                break
+            case 'detailedAddress':
+                if(!value) {
+                    error = '상세 주소는 필수 입력항목입니다.'
+                }
+                break
+            default:
+                break                 
+        }
+        return error
+    }    
+        // const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        
+
     const handleChange = (e) => {
-        // registerParam[e.target.name] = e.target.value
-        // setRegisterParam({...registerParam})
+        const {name, value} = e.target
+
         setRegisterParam({
             ...registerParam,
-            [e.target.name]: e.target.value
+            [name]: value
         });
 
-        if(e.target.name === 'pw' || e.target.name === 'confirmPw') {
-            if(registerParam.pw !== e.target.value && e.target.name === 'confirmPw') {
-                setError('비밀번호가 일치하지 않습니다.')
-            } else {
-                setPwError('')
-            }
+        let error
+        if (name === 'confirmPw') { // confirmPw 필드에 입력할 때마다 현재 pw 필드의 값과 비교하여 에러 체크
+            error = validateField(name, value, registerParam.pw)
+        } else { // confirm 필드가 비어있을 때는 에러 메시지를 표시하지 않음
+            error = validateField(name, value)
+        }
+        setErrors({
+            ...errors,
+            [name]: error
+        })
+
+        // pw가 변경되었을 때도 confirmPw 필드의 값을 재검증하여 에러 상태 업데이트
+        if(name === 'pw' && registerParam.confirmPw) {
+            const confirmPwError = validateField('confirmPw', registerParam.confirmPw, value)
+            setErrors(prev => ({
+                ...prev,
+                confirmPw: confirmPwError
+            }))
         }
     }
 
@@ -71,10 +117,18 @@ const RegisterComponent = () => {
     }
 
     const handleClickRegister = () => {
-        if(registerParam.pw !== registerParam.confirmPw) {
-            setPwError('비밀번호가 일치하지 않습니다.')
-            return;
+        const newErrors ={}
+        Object.keys(registerParam).forEach(key => {
+            const error = validateField(key, registerParam[key])
+            if(error) {
+                newErrors[key] = error
+            }
+        })
+        if(Object.keys(newErrors).length > 0) {
+            setErrors(newErrors)
+            return
         }
+
         // 회원가입 처리 로직
         doRegister(registerParam)
     }
@@ -97,6 +151,8 @@ const RegisterComponent = () => {
                     value={registerParam.email}
                     onChange={handleChange}>
                     </input>
+                    <div className="w-1/5 pr-3 text-left"></div>
+                    {errors.email && <div className="w-4/5 text-red-600 mt-1">{errors.email}</div>}
                 </div>
             </div>
             <div className="flex justify-center">
@@ -108,10 +164,12 @@ const RegisterComponent = () => {
                              border-neutral-500 shadow-md"
                     name="pw"
                     type={'password'}
-                    placeholder="비밀번호"
+                    placeholder="비밀번호는 최소 6자리이상 입력"
                     value={registerParam.pw}
                     onChange={handleChange}>                    
                     </input>
+                    <div className="w-1/5 pr-3 text-left"></div>
+                    {errors.pw && <div className="w-4/5 text-red-600 mt-1">{errors.pw}</div>}
                 </div>
             </div>
             <div className="flex justify-center">
@@ -123,11 +181,12 @@ const RegisterComponent = () => {
                         className="w-4/5 p-3 rounded-r border border-solid border-neutral-500 shadow-md"
                         name="confirmPw"
                         type="password"
-                        placeholder="비밀번호 확인"
+                        placeholder="비밀번호를 한번더 입력해 주세요"
                         value={registerParam.confirmPw}
                         onChange={handleChange}>
                     </input>
-                    {pwError && <div className="w-full text-red-600 font-bold mt-1">{pwError}</div>}
+                    <div className="w-1/5 pr-3 text-left"></div>
+                    {errors.confirmPw && <div className="w-4/5 text-red-600 mt-1">{errors.confirmPw}</div>}
                 </div>
             </div>
             <div className="flex justify-center">
@@ -143,6 +202,8 @@ const RegisterComponent = () => {
                     value={registerParam.username}
                     onChange={handleChange}>    
                     </input>
+                    <div className="w-1/5 pr-3 text-left"></div>
+                    {errors.username && <div className="w-4/5 text-red-600 mt-1">{errors.username}</div>}
                 </div>
             </div>
             <div className="flex justify-center">
@@ -186,6 +247,8 @@ const RegisterComponent = () => {
                             value={registerParam.address}
                             readOnly>
                     </input>
+                    <div className="w-1/5 pr-3 text-left"></div>
+                    {errors.address && <div className="w-4/5 text-red-600 mt-1">{errors.address}</div>}
                 </div>     
             </div>    
             <div className="flex justify-center">
@@ -199,16 +262,11 @@ const RegisterComponent = () => {
                             placeholder="상세주소"
                             value={registerParam.detailedAddress}
                             onChange={handleChange}>
-                    </input>               
+                    </input>
+                    <div className="w-1/5 pr-3 text-left"></div>
+                    {errors.detailedAddress && <div className="w-4/5 text-red-600 mt-1">{errors.detailedAddress}</div>}               
                 </div>
             </div>  
-
-
-            <div className="flex justify-center">
-                <div className="relative mb-1 flex w-full flex-wrap items-stretch">
-                    {error && <label className="text-red-600 font-bold">{error}</label>}
-                </div>
-            </div>
 
             <div className="flex justify-center mt-8">
                 <div className="relative mb-1 flex w-full justify-center">
